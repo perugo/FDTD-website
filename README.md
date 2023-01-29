@@ -1,2 +1,2 @@
 # FDTD-two-dimension
-create a FDTD simulation video in Java. User can set objects in a bitmap
+FDTD simulation website. User can set obstacle air or metal in a two dimension field.
