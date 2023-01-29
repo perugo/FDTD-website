@@ -17,19 +17,19 @@ public class FDTDVideo {
     int i;
     private int simulation_num;
     public FDTDVideo(){
-        String bitmap_filedir="C:/Users/girar/Downloads/html/bitmap_info.txt"; //Set your bitmap file directory in your computer file.
+        String bitmap_filedir="/home/perugo/html2_project/inputfol/bitmap_info.txt"; //Set your bitmap file directory in your computer file.
                                                                                //Set your file directory where php uploads bitmap_info.txt.
-        String info_filedir="C:/Users/girar/Downloads/html/info.txt";//Set your bitmap file directory in your computer file.
+        String info_filedir="/home/perugo/html2_project/inputfol/info.txt";//Set your bitmap file directory in your computer file.
                                                                      //Set your file directory where php uploads info.txt.
-        String mp4_filedir="C:/Users/girar/Downloads/html/test.mp4";//Set your bitmap file directory in your computer file.
+        String mp4_filedir="/home/perugo/html2_project/test.mp4";//Set your bitmap file directory in your computer file.
         //                                                          //Set your file directory where php downloads the output mp4 video.
         long nextFrameTime = 0;
         final long frameRate = DEFAULT_TIME_UNIT.convert(100, MILLISECONDS);
         final int Max_Img_Length=500;
         int Img_width;
         int Img_height;
-        simulation_num=800;
-        int drawcanvasrate=10;
+        simulation_num=500;
+        int drawcanvasrate=3;
         try(FileReader fr=new FileReader(bitmap_filedir); //Reads your bitmap file directory
             BufferedReader br=new BufferedReader(fr);
             FileReader fr2=new FileReader(info_filedir); //Reads your info file directory

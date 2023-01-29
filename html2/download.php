@@ -1,9 +1,9 @@
 <?php
 
-$filename="/home/perugo/html2_project/inputfol/bitmap_info.txt";
-$filename2="/home/perugo/html2_project/inputfol/info.txt";
-$filename3="/home/perugo/html2_project/test.mp4";
-$jarFilePath = "/home/perugo/html2_project/FDTDVideo.jar";
+$filename="/home/your-username/html2_project/inputfol/bitmap_info.txt";
+$filename2="/home/your_username/html2_project/inputfol/info.txt";
+$filename3="/home/your_username/html2_project/test.mp4";
+$jarFilePath = "/home/your_username/html2_project/FDTDVideo.jar";
 
 $bitmap=$_POST['bitmap'];
 $xnum=$_POST['xnum'];

@@ -43,13 +43,10 @@ public class WavePoint {
   public int simulation_num;
   public WavePoint(FDTD_Input fdtd_input){
     xnum=fdtd_input.get_xnum(); //x軸方向の格子の数
-    System.out.println("xnum : "+xnum);
     znum=fdtd_input.get_znum(); //z軸方向の格子の数
-    System.out.println("znum : "+znum);
     dx=fdtd_input.get_dx(); //x軸の空間離散間隔の定義 [m]
     dz=fdtd_input.get_dz(); //z軸の空間離散間隔の定義 [m]
     feq= fdtd_input.get_feq(); //[振動/fs]
-    System.out.println("fed : "+feq);
     //feq=10e9;
     bitmap=fdtd_input.get_bitmap();
 
@@ -132,9 +129,6 @@ public class WavePoint {
 	  
 	ey_double=Math.sin(Math.PI*2.0*feq*t);
 	hx_double=Math.sin(Math.PI*2.0*feq*(t+dt/2));
-    if(simulation_num%10==0){
-      System.out.println(ey_double);
-    }
   }
   private void cal_reishin_Ey(){  //励振のための電界の保存
     keep_ey0=Ey[IWX][IWZ];
