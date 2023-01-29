@@ -1,0 +1,423 @@
+
+<!DCOTYPE>
+<html lang="ja";
+    <head>
+        <meta charset="UTF-8" />
+        <link rel="stylesheet" href="001.css" type="text/css"/>
+        <title>page title</title>
+        <script>
+var canvas1; //canvas1要素を取得
+             //canvas1の描写対象 : bitmapの色
+var canvas2; //canvas2要素を取得
+             //canvas2の描写対象 : bitmapのマス枠線と縁の枠線
+var canvas3; //canvas3要素を取得
+             //canvas3の描写対象 : マウス選択範囲の長方形
+var canvas4; //canvas4要素を取得
+             //canvas4の描写対象 : x軸、z軸の格子全体の長さ[mm]を文字で描写
+var ctx1; //canvas1に対して操作するプロパティやメソッドはctx1から呼び出す
+var ctx2; //canvas2に対して操作するプロパティやメソッドはctx2から呼び出す
+var ctx3; //canvas3に対して操作するプロパティやメソッドはctx3から呼び出す
+var ctx4; //canvas4に対して操作するプロパティやメソッドはctx4から呼び出す
+
+var drag; //ユーザーがマウスを押している状態かを取得する
+          //押している場合 true, 離している場合 false
+
+var start_x; //ユーザーがマウスを押し始めたx座標
+var start_y; //ユーザーがマウスを押し始めたy座標
+var end_x; //ユーザーが現在マウスを押しているx座標
+var end_y; //ユーザーが現在マウスを押しているy座標
+
+var bitmap; //障害物の種類を数字で表現する二次元配列
+var dx; //x軸のマス目の大きさ
+var dz; //z軸のマス目の大きさ
+var xnum; //x軸のマス目の数
+var znum; //z軸のマス目の数
+var width; //格子全体の幅
+var height; //格子全体の高さ
+var mm=3.0; //マス目は3mm　変更不可
+var canvas_width; //canvasの幅
+var canvas_height; //canvasの高さ
+var resolution;
+var object_index; //ユーザーが選択している障害物のindex
+var object_color; //ユーザーが選択している障害物の色
+//
+function init(){ /*ページの読み込み後に一度だけ実行されるメソッド
+                 <body onload="init()">によって実行される*/
+    dx=15; //x軸のマス目のcanvasでの大きさ
+    dz=15; //z軸のマス目のcanvasでの大きさ
+
+    object_index=1;
+
+    canvas1 = document.getElementById("canvas1");
+    canvas2= document.getElementById("canvas2");
+    canvas3= document.getElementById("canvas3");
+    canvas4= document.getElementById("canvas4");
+    ctx1 = canvas1.getContext("2d");
+    ctx2= canvas2.getContext("2d");
+    ctx3=canvas3.getContext("2d");
+    ctx4=canvas4.getContext("2d");
+
+    canvas_width=canvas1.width; //canvas1より,canvasの幅を取得
+    canvas_height=canvas1.height; //canvas1より、canvasの高さを取得
+    ctx1.clearRect(0,0,canvas_width,canvas_height); //clearRect()は描写をクリアする
+    ctx2.clearRect(0,0,canvas_width,canvas_height); //clearRect()は描写をクリアする
+    ctx3.clearRect(0,0,canvas_width,canvas_height); //clearRect()は描写をクリアする
+    ctx4.clearRect(0,0,canvas_width,canvas_height); //clearRect()は描写をクリアする
+
+
+    drag=false; //マウスは現在押されていないと設定する
+    canvas3.addEventListener('mousedown',on_mousedown,false); //canvas内でマウスを押した際、on_mousedown()メソッドを実行するアクションリスナーを作る
+    canvas3.addEventListener('mousemove',on_mousemove,false); //canvas内でマウスを動かした際、on_mousemove()メソッドを実行するアクションリスナーを作る
+    canvas3.addEventListener('mouseup',on_mouseup,false); //canvas内でマウスを離した際、on_mouseup()メソッドを実行するアクションリスナーを作る
+
+    parsehtml_rb_object();
+    parsehtml_combo_resolution();
+    parsehtml_combo_frequency();
+    parsehtml_combo_xnum();
+    parsehtml_combo_znum();
+    
+    object_color=object_array[object_index].color;
+    rb_object_1=document.getElementById("rb_object_1");
+    rb_object_1.checked=true;
+    combo_xnum=document.getElementById("combo_xnum");
+    combo_xnum.options[11].selected =true;
+    xnum=combo_xnum.value;
+    combo_znum=document.getElementById("combo_znum");
+    combo_znum.options[11].selected =true;
+    znum=combo_znum.value;
+    combo_resolution=document.getElementById("combo_resolution");
+    combo_resolution.options[2].selected =true;
+    resolution=combo_resolution.value;
+    combo_frequency=document.getElementById("combo_frequency");
+    combo_frequency.options[5].selected =true;
+
+    width=dx*xnum; //canvasでの格子全体の幅  dx*xnum
+    height=dz*znum; //canvasでの格子全体の高さ dz*znum
+
+    bitmap=twoDimensionArray(xnum,znum); //bitmapを作成
+    draw_bitmap(); //作成したbitmapをcanvas1で描写
+    draw_canvas_background(); //背景の囲い線と枠線をcanvas2で描写
+    draw_haba();
+    ctx1.fillStyle="rgb(255,0,0)";
+    ctx1.fillRect( Math.floor(xnum/2)*dx, Math.floor(znum/2)*dz,dx,dz);
+}
+
+function set_bitmap(){ /*画面サイズ調整が行われた際、実行される
+                       change_setting()によって、実行される*/
+    bitmap=twoDimensionArray(xnum,znum); //bitmapを作成
+    width=dx*xnum; //格子全体の幅を設定
+    height=dz*znum; //格子全体の高さを設定
+    drag=false; //マウスは現在押されていないと設定する
+    ctx1.clearRect(0,0,canvas_width,canvas_height); //clearRect()は描写をクリアする
+    ctx2.clearRect(0,0,canvas_width,canvas_height); //clearRect()は描写をクリアする
+    ctx3.clearRect(0,0,canvas_width,canvas_height); //clearRect()は描写をクリアする
+    draw_bitmap(); //作成したbitmapをcanvas1で描写
+    draw_canvas_background(); //背景の囲い線と枠線をcanvas2で描写
+    draw_haba();
+}
+
+function parsehtml_rb_object(){ /*ラジオボタンのhtmlを挿入するメソッド 
+                                init()によって、実行される*/
+  var d1=document.getElementById('rb_object');
+  object_array.forEach(elm => {
+    d1.insertAdjacentHTML('beforeend',`<label><input type="radio" id="rb_object_${elm.index}" name="RadioButton_object" onclick="on_rb_object_clicked(${elm.index});">${elm.name}</label>`);
+  })
+}
+function parsehtml_combo_xnum(){
+    var d1=document.getElementById('combo_xnum');
+    for(var i=20;i<=45;i++){
+        d1.insertAdjacentHTML('beforeend',`<option value=${i}>${i}</option>`);
+    }
+}
+function parsehtml_combo_znum(){
+    var d1=document.getElementById('combo_znum');
+    for(var i=10;i<=35;i++){
+        d1.insertAdjacentHTML('beforeend',`<option value=${i}>${i}</option>`);
+    }
+}
+function parsehtml_combo_resolution(){
+    var d1=document.getElementById('combo_resolution');
+    resolution_array.forEach(elm =>{
+        var name=mm*elm.value+" [mm]";
+        d1.insertAdjacentHTML('beforeend',`<option value=${elm.value}>${name}</option>`);
+    })
+}
+function parsehtml_combo_frequency(){
+    var d1=document.getElementById('combo_frequency');
+    frequency_array.forEach(elm => {
+        var name=elm.coefficient+"*10^"+elm.power;
+      d1.insertAdjacentHTML('beforeend',`<option value=${elm.index}>${name}</option>`);
+    })
+}
+
+function on_rb_object_clicked(value){ /*ラジオボタンをクリックした際、実行される
+                                init()で作成された各ラジオボタンが持つアクションリスナ*/
+    object_index=value;
+    object_color=object_array[object_index].color;
+}
+function select_xnum_change(){
+    target = document.getElementById("combo_xnum");
+    xnum = target.value;
+    set_bitmap();
+}
+function select_znum_change(){
+    target = document.getElementById("combo_znum");
+    znum = target.value;
+    set_bitmap();
+}
+function select_resolution_change(){
+    target=document.getElementById("combo_resolution");
+    resolution=target.value;
+    draw_haba();
+}
+const object_array=[
+    {index:0, name: "空気" ,color: "rgb(255,255,255)"},
+    {index:1, name: "金属" ,color: "rgb(0,0,0)"},
+]
+const resolution_array=[
+    {value:1},
+    {value:2},
+    {value:4},
+    {value:5}
+]
+const frequency_array=[
+    {index:0,coefficient:5,power:9},
+    {index:1,coefficient:6,power:9},
+    {index:2,coefficient:7,power:9},
+    {index:3,coefficient:8,power:9},
+    {index:4,coefficient:9,power:9},
+    {index:5,coefficient:1,power:10},
+    {index:6,coefficient:2,power:10},
+    {index:7,coefficient:3,power:10},
+    {index:8,coefficient:4,power:10},
+    {index:9,coefficient:5,power:10},
+]
+
+function on_mousedown(e){ /*マウスを押した際、実行される
+                          init()で作成されたアクションリスナ*/
+    if(drag==false){
+        var rect = e.target.getBoundingClientRect();
+        start_x = e.clientX - rect.left;
+        start_y = e.clientY - rect.top;
+        if(start_x<=width && start_y<=height){
+            end_x=start_x; end_y=start_y;
+            bitmap_set(start_x/dx,start_y/dz,object_index);
+            draw();
+            drag=true;
+        }
+    }
+}
+function on_mousemove(e){/*マウスを動かした際、実行される
+                          init()で作成されたアクションリスナ*/
+    if(drag){
+      var rect = e.target.getBoundingClientRect();
+      end_x = e.clientX - rect.left;
+      end_y = e.clientY - rect.top;
+      draw();
+    }
+}
+function on_mouseup(e){ /*マウスを離した際、実行される
+                          init()で作成されたアクションリスナ*/
+  drag=false;
+  draw();
+}
+function bitmap_set(x,z,i){ /*bitmap(x,z)の値を書き換えるメソッド
+                           on_mousedown(),draw()によって実行される*/
+    var index_x=Math.floor(x);
+    var index_z=Math.floor(z);
+    bitmap[index_x][index_z]=i;
+}
+function draw_bitmap(){/*各格子を描写するメソッド
+                        init(),set_bitmap,draw()によって実行される*/
+    ctx1.clearRect(0,0,canvas_width,canvas_height);
+    for(var i=0;i<xnum;i++){
+        for(var n=0;n<znum;n++){
+            var c=bitmap[i][n];
+            ctx1.fillStyle=object_array[c].color;
+            ctx1.fillRect(i*dx,n*dz,dx,dz);
+        }
+    }
+}
+
+function draw_canvas_background(){ //各格子の枠線と格子全体の枠線を描写するメソッド
+                                   //init(),set_bitmap()メソッドによって実行される
+    /*格子全体の枠線を描写*/
+    line(0,1,width,1,3,"black");
+    line(1,0,1,height,3,"black");
+    line(0,height-1,width,height-1,3,"black");
+    line(width-1,0,width-1,height,3,"black");
+
+    /*各格子の枠線を描写*/
+    for(var i=0;i<xnum;i++){
+        line(dx*i,0,dx*i,height,1,"black");
+    }
+    for(var i=0;i<znum;i++){
+        line(0,dz*i,width,dz*i,1,"black");
+    }
+    /*線を描写する内部メソッド*/
+    function line(x1,y1,x2,y2,w,col){
+        ctx2.strokeStyle=col;
+        ctx2.lineWidth=w;
+        ctx2.beginPath();
+        ctx2.moveTo(x1,y1);
+        ctx2.lineTo(x2,y2);
+        ctx2.stroke();
+    }
+}
+function draw(){ //マウス選択範囲の四角形と各格子を描写するメソッド
+                 //on_mouseup(),on_mousedown(),on_mousemove()メソッドによって実行される
+    if(drag){
+        var disp_x;
+        var disp_y;
+        var w;
+        var h;
+        if(start_x<end_x){
+            disp_x=start_x;
+            w=end_x-start_x;
+        }else{
+            disp_x=end_x;
+            w=start_x-end_x;
+        }
+        if(start_y<end_y){
+            disp_y=start_y;
+            h=end_y-start_y;
+        }else{
+            disp_y=end_y;
+            h=start_y-end_y;
+        }
+        ctx3.clearRect(0,0,canvas_width,canvas_height);
+        draw_rect(disp_x,disp_y,w,h); //マウス選択範囲の四角形を描写
+        for(var i=Math.floor(disp_x/dx);(disp_x+w)/dx>=i;i++){
+            for(var n=Math.floor(disp_y/dz);(disp_y+h)/dz>=n;n++){
+                bitmap_set(i,n,object_index); //マウス選択範囲を元に、bitmapに値を挿入する
+            }
+        }
+    }else{
+        ctx3.clearRect(0,0,canvas_width,canvas_height);
+    }
+    draw_bitmap(); //各格子を描写する
+
+    function draw_rect(x1,y1,ww,hh){ //四角形を描写する内部メソッド
+        ctx3.beginPath();
+        ctx3.rect(x1,y1,ww,hh);
+        ctx3.strokeStyle="rgb(0,0,0)";
+        ctx3.lineWidth=1;
+        ctx3.stroke();
+    }
+}
+function twoDimensionArray(a,b){ /*bitmapを作成するメソッド
+                                   init(),set_bitmap()が実行する*/
+    var x=new Array(a);
+    for(var i=0;i<a;i++){
+        x[i]=new Array(b);
+    }
+    for(var i=0;i<a;i++){
+        for(var n=0;n<b;n++){
+            x[i][n]=0;
+        }
+    }
+    return x;
+}
+function draw_haba(){
+    ctx4.clearRect(0,0,canvas_width,canvas_height); //clearRect()は描写をクリアする
+    x=width/3;
+    y=height+20;
+    ctx4.font = 'bold 12pt sans-serif';
+    ctx4.fillText("x軸 "+xnum*mm*resolution+" [mm]",x,y,200);
+    x=width+10;
+    y=height/2;
+    ctx4.fillText("z軸 "+znum*mm*resolution+" [mm]",x,y,200);
+}
+function submitForm() { /*form__submitをPOSTするメソッド
+                          html内のボタン名「FDTDを実行」が実行する*/
+    let form = document.getElementById("form__submit");
+    document.getElementById('bitmap').value=bitmap;
+    document.getElementById('xnum').value=xnum;
+    document.getElementById('znum').value=znum;
+    document.getElementById('resolution').value=resolution;
+    frequency_index = document.getElementById("combo_frequency").value;
+    document.getElementById('frequency_coefficient').value=frequency_array[frequency_index].coefficient;
+    document.getElementById('frequency_power').value=frequency_array[frequency_index].power;
+    
+    
+    form.submit();
+    
+}
+
+
+</script>
+
+</head>
+
+
+<body onload="init()">
+  <h2>二次元FDTDシュミレーション</h2>
+  <button class="button-79" role="button" onclick="submitForm();">シュミレーション動画をダウンロード</button>
+  <h4></h4>
+  <div class="parent">
+    <div class="layout">
+      <canvas id="canvas4" width="800px" height="600px"></canvas><!--x軸、z軸の格子全体の長さを文字で描写-->
+      <canvas id="canvas1" width="800px" height="600px"></canvas><!--bitmapの色-->
+      <canvas id="canvas2" width="800px" height="600px"></canvas><!--canvasのマス目と枠線-->
+      <canvas id="canvas3" width="800px" height="600px"></canvas><!--マウスの長方形の枠線-->
+                                                                <!--canvas3が一番前方に配置されている-->
+                                                                <!--canvas3が末尾にあるので、アクションリスナの反応元をcanvas3にする-->
+    </div>
+
+
+    <div class ="setting">
+      <h2>障害物設定</h2>
+      <div id="rb_object"> <!--rb_blockの要素はjavascriptで挿入する-->
+                          <!--function parsehtml_rb_object()が実行する-->
+      </div>
+      
+      <h2>マス目の設定</h2>
+      <label for="lb_xnum">xのマス目の数</label>
+      <div class="dropdown">
+        <select id="combo_xnum" class="dropdown-select" onchange="select_xnum_change();">
+        </select>
+      </div>
+      <div></div>
+      <label for="lb_znum">zのマス目の数</label>
+      <div class="dropdown">
+      <select id="combo_znum" class="dropdown-select" onchange="select_znum_change()">
+      </select>
+      </div>
+
+      <h2>FDTD設定</h2>
+      <label for="lb_gridlength">空間離散間隔 : 3.0[mm]</label>
+      <p></p>
+      <label for="lb_resolution">マス目の間隔 : </label>
+      <div class="dropdown">
+      <select id="combo_resolution" class="dropdown-select" onchange="select_resolution_change()">
+      </select>
+      </div>
+      <p></p>
+
+      <label for="lb_frequency">周波数</label>
+      <div class="dropdown">
+      <select id="combo_frequency" class="dropdown-select">
+      </select>
+      </div>
+      <div class="atogaki" top="10px">
+        <h4>あとがき</h4>
+        <h4></h4>
+          <p>金属は電磁波を反射します</p>
+          <p>境界上にPML層を実装するプログラムが実装されていません。</p>
+          <p>電磁波は境界線から反射されます</p>
+        </div>
+    </div>
+
+  </div>
+  <form id="form__submit" action="download.php" method="POST">
+    <input type="hidden" id="bitmap" name="bitmap">
+    <input type="hidden" id="xnum" name="xnum">
+    <input type="hidden" id="znum" name="znum">
+    <input type="hidden" id="resolution" name="resolution">
+    <input type="hidden" id="frequency_coefficient" name="frequency_coefficient">
+    <input type="hidden" id="frequency_power" name="frequency_power">
+
+  </form>
+  
+</body>
+</html>
