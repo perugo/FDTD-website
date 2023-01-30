@@ -2,6 +2,6 @@
 FDTD simulation website. User can set air or metal in a two dimension field.
 
 
+![test (2)](https://user-images.githubusercontent.com/34999008/215493146-9659da62-be55-48c6-87ec-a408f441ff8e.gif)
 
-https://user-images.githubusercontent.com/34999008/215492995-90b72911-2cab-41c3-b0b6-f84562c0dd7f.mp4
 
