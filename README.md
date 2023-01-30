@@ -23,7 +23,7 @@ for security reasons, only html,css,php is in html2 folder
 # html2_project commit
 html2_project is where user's input text folder,output mp4,FDTDVideo.jar is stored.
 
-#FDTDVideo commit
+# FDTDVideo commit
 
 FDTDVideo is a java project Developed in Intellij.
 
