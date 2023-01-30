@@ -39,5 +39,7 @@ External jar library that I have used is in FDTDVideo/libs directory
 
 I had support from Kashiwa-Tashiwa Kitami Institude of Technology 柏-達也 北見工大
 
+http://kashiwa-lab.net/
+
 He had taught me how FDTD simulation algorism works.
 
