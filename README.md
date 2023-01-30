@@ -16,3 +16,7 @@ FDTD simulation website. User can set air or metal in a two dimension field.
   - use Intellij to make a jar file
   - the external library you need is inside the FDTDVideo project
 
+
+# External jar library
+- slf4j-api-2.0.6.jar
+- xuggle-xuggler-5.4.jar
