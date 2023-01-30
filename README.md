@@ -34,3 +34,10 @@ External jar library that I have used is in FDTDVideo/libs directory
 # External jar library
 - slf4j-api-2.0.6.jar
 - xuggle-xuggler-5.4.jar
+
+#Special Thanks 
+
+I had support from Kashiwa-Tashiwa 柏-達也 Kitami Institude of Technology 北見工大
+
+He had taught me how FDTD simulation algorism works.
+
