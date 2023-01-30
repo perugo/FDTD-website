@@ -6,3 +6,13 @@ FDTD simulation website. User can set air or metal in a two dimension field.
 
 
 
+# how to use
+
+- Install apache server
+  - set apache DocumentRoot to html2
+  - install php
+
+- make a jar file from FDTDVideo folder
+  - use Intellij to make a jar file
+  - the external library you need is inside the FDTDVideo project
+
