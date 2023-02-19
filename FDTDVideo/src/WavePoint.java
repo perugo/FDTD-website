@@ -42,10 +42,10 @@ public class WavePoint {
   public double[] MUR_ZTop; //Keeps top of z field for Mur
   public int simulation_num;
   public WavePoint(FDTD_Input fdtd_input){
-    xnum=fdtd_input.get_xnum(); //x軸方向の格子の数
-    znum=fdtd_input.get_znum(); //z軸方向の格子の数
-    dx=fdtd_input.get_dx(); //x軸の空間離散間隔の定義 [m]
-    dz=fdtd_input.get_dz(); //z軸の空間離散間隔の定義 [m]
+    xnum=fdtd_input.get_nx(); //x軸方向の格子の数
+    znum=fdtd_input.get_ny(); //z軸方向の格子の数
+    dx=fdtd_input.get_lattice_width(); //x軸の空間離散間隔の定義 [m]
+    dz=fdtd_input.get_lattice_width(); //z軸の空間離散間隔の定義 [m]
     feq= fdtd_input.get_feq(); //[振動/fs]
     //feq=10e9;
     bitmap=fdtd_input.get_bitmap();

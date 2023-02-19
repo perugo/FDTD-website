@@ -11,7 +11,6 @@ import com.xuggle.xuggler.ICodec;
 
 import static com.xuggle.xuggler.Global.DEFAULT_TIME_UNIT;
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
-//javac -classpath xuggle-xuggler-5.4.jar;log4j-1.2.12.jar;slf4j-api-2.0.6.jar;log4j-1.2.12.jar; FDTDVideo.java
 public class FDTDVideo {
     private Canvas canvas;
     int i;
@@ -28,8 +27,10 @@ public class FDTDVideo {
         final int Max_Img_Length=500;
         int Img_width;
         int Img_height;
-        simulation_num=500;
-        int drawcanvasrate=3;
+
+        int drawcanvasrate=6;
+        int filmnum=100;
+        simulation_num=drawcanvasrate*filmnum;
         try(FileReader fr=new FileReader(bitmap_filedir); //Reads your bitmap file directory
             BufferedReader br=new BufferedReader(fr);
             FileReader fr2=new FileReader(info_filedir); //Reads your info file directory
@@ -44,29 +45,29 @@ public class FDTDVideo {
                 i++;
             }
             int input_xnum=info_Map.get(0);
-            int input_znum=info_Map.get(1);
-            input_bitmap=new int[input_xnum][input_znum];
+            int input_ynum=info_Map.get(1);
+            input_bitmap=new int[input_xnum][input_ynum];
             while((inputf=br.readLine())!=null){
                 String[] lines=inputf.split(",");
                 int ii=0;
                 for(i=0;i<input_xnum;i++){
-                    for(int n=0;n<input_znum;n++){
+                    for(int n=0;n<input_ynum;n++){
                         input_bitmap[i][n]=Integer.parseInt(lines[ii]);
                         ii++;
                     }
                 }
             }
             FDTD_Input fdtd_input=new FDTD_Input(info_Map,input_bitmap);
-            int xnum=fdtd_input.get_xnum();
-            int znum=fdtd_input.get_znum();
+            int nx=fdtd_input.get_nx();
+            int ny=fdtd_input.get_ny();
             
-            int max=Math.max(xnum,znum);
+            int max=Math.max(nx,ny);
             int bunkaino=1;
             while(Max_Img_Length>bunkaino*max){
                 bunkaino++;
             }
-            Img_width=bunkaino*xnum;
-            Img_height=bunkaino*znum;
+            Img_width=bunkaino*nx;
+            Img_height=bunkaino*ny;
 
             canvas=new Canvas(Img_width,Img_height,bunkaino,fdtd_input);
             try {

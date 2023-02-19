@@ -4,7 +4,8 @@
     <head>
         <meta charset="UTF-8" />
         <link rel="stylesheet" href="001.css" type="text/css"/>
-        <title>page title</title>
+        <title>電磁波シュミレーション</title>
+        <meta name="description" content="２次元電磁波解析が簡単に行えるウェブサイトです">
         <script>
 var canvas1; //canvas1要素を取得
              //canvas1の描写対象 : bitmapの色
@@ -89,7 +90,7 @@ function init(){ /*ページの読み込み後に一度だけ実行されるメ�
     combo_resolution.options[2].selected =true;
     resolution=combo_resolution.value;
     combo_frequency=document.getElementById("combo_frequency");
-    combo_frequency.options[5].selected =true;
+    combo_frequency.options[6].selected =true;
 
     width=dx*xnum; //canvasでの格子全体の幅  dx*xnum
     height=dz*znum; //canvasでの格子全体の高さ dz*znum
@@ -353,6 +354,9 @@ function submitForm() { /*form__submitをPOSTするメソッド
 <body onload="init()">
   <h2>二次元FDTDシュミレーション</h2>
   <button class="button-79" role="button" onclick="submitForm();">シュミレーション動画をダウンロード</button>
+  <button class="button-79"   style="border-radius:0.20rem;
+  font-size:0.8rem;
+  float: right;" role="button" onclick="window.open('https://note.com/clever_tern732/n/n98e02e1e4f2a')"target="_blank" rel="norefferrer">本プログラムの解説記事を読む</button>
   <h4></h4>
   <div class="parent">
     <div class="layout">
@@ -399,12 +403,16 @@ function submitForm() { /*form__submitをPOSTするメソッド
       <select id="combo_frequency" class="dropdown-select">
       </select>
       </div>
+      <h2>PML吸収境界条件</h2>
+      <label for="lb_lpml">PML層 : 15</label>
+      <p></p>
+      <label for="lb_order">次数 : 5</label>
+      <p></p>
+      <label for="lb_max">磁気伝導率の最大値 : 38.341</label>
       <div class="atogaki" top="10px">
         <h4>あとがき</h4>
         <h4></h4>
           <p>金属は電磁波を反射します</p>
-          <p>境界上にPML層を実装するプログラムが実装されていません。</p>
-          <p>電磁波は境界線から反射されます</p>
         </div>
     </div>
 
