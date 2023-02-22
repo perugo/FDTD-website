@@ -7,18 +7,18 @@ $jarFilePath = "/home/perugo/html2_project/FDTDVideo.jar";
 
 $bitmap=$_POST['bitmap'];
 $xnum=$_POST['xnum'];
-$znum=$_POST['znum'];
+$ynum=$_POST['ynum'];
 $resolution=$_POST['resolution'];
 $frequency_coefficient=$_POST['frequency_coefficient'];
 $frequency_power=$_POST['frequency_power'];
 
 
-if(isset($bitmap) && isset($xnum) && isset($znum) && isset($resolution) && isset($frequency_coefficient) && isset($frequency_power)){
+if(isset($bitmap) && isset($xnum) && isset($ynum) && isset($resolution) && isset($frequency_coefficient) && isset($frequency_power)){
 $fp = fopen($filename,"wb");
     fwrite($fp,$bitmap);
     fclose($fp);
     $fp2 = fopen($filename2,"wb");
-    $data=$xnum . "\n" . $znum . "\n" . $resolution . "\n" .$frequency_coefficient . "\n" . $frequency_power;
+    $data=$xnum . "\n" . $ynum . "\n" . $resolution . "\n" .$frequency_coefficient . "\n" . $frequency_power;
     fwrite($fp2,$data);
     fclose($fp2);
     

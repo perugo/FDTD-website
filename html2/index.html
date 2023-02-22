@@ -5,20 +5,23 @@
         <meta charset="UTF-8" />
         <link rel="stylesheet" href="001.css" type="text/css"/>
         <title>電磁波シュミレーション</title>
+        <link rel="icon" href="website_icon.ico">
         <meta name="description" content="２次元電磁波解析が簡単に行えるウェブサイトです">
         <script>
-var canvas1; //canvas1要素を取得
-             //canvas1の描写対象 : bitmapの色
-var canvas2; //canvas2要素を取得
-             //canvas2の描写対象 : bitmapのマス枠線と縁の枠線
-var canvas3; //canvas3要素を取得
-             //canvas3の描写対象 : マウス選択範囲の長方形
+
 var canvas4; //canvas4要素を取得
              //canvas4の描写対象 : x軸、z軸の格子全体の長さ[mm]を文字で描写
-var ctx1; //canvas1に対して操作するプロパティやメソッドはctx1から呼び出す
-var ctx2; //canvas2に対して操作するプロパティやメソッドはctx2から呼び出す
-var ctx3; //canvas3に対して操作するプロパティやメソッドはctx3から呼び出す
+var canvas3; //canvas1要素を取得
+             //canvas1の描写対象 : bitmapの描写
+var canvas2; //canvas2要素を取得
+             //canvas2の描写対象 : bitmapのマス枠線と縁の枠線
+var canvas1; //canvas3要素を取得
+             //canvas3の描写対象 : マウス選択範囲の長方形
+
 var ctx4; //canvas4に対して操作するプロパティやメソッドはctx4から呼び出す
+var ctx3; //canvas3に対して操作するプロパティやメソッドはctx3から呼び出す
+var ctx2; //canvas2に対して操作するプロパティやメソッドはctx2から呼び出す
+var ctx1; //canvas1に対して操作するプロパティやメソッドはctx1から呼び出す
 
 var drag; //ユーザーがマウスを押している状態かを取得する
           //押している場合 true, 離している場合 false
@@ -30,9 +33,9 @@ var end_y; //ユーザーが現在マウスを押しているy座標
 
 var bitmap; //障害物の種類を数字で表現する二次元配列
 var dx; //x軸のマス目の大きさ
-var dz; //z軸のマス目の大きさ
+var dy; //y軸のマス目の大きさ
 var xnum; //x軸のマス目の数
-var znum; //z軸のマス目の数
+var ynum; //y軸のマス目の数
 var width; //格子全体の幅
 var height; //格子全体の高さ
 var mm=3.0; //マス目は3mm　変更不可
@@ -41,80 +44,83 @@ var canvas_height; //canvasの高さ
 var resolution;
 var object_index; //ユーザーが選択している障害物のindex
 var object_color; //ユーザーが選択している障害物の色
+
+var center_x;
+var center_y;
 //
 function init(){ /*ページの読み込み後に一度だけ実行されるメソッド
                  <body onload="init()">によって実行される*/
-    dx=15; //x軸のマス目のcanvasでの大きさ
-    dz=15; //z軸のマス目のcanvasでの大きさ
+    dx=15; //x軸のマス目のcanvasでの幅
+    dy=15; //y軸のマス目のcanvasでの幅
 
     object_index=1;
 
+    canvas4 = document.getElementById("canvas4");
+    canvas3 = document.getElementById("canvas3");
+    canvas2 = document.getElementById("canvas2");
     canvas1 = document.getElementById("canvas1");
-    canvas2= document.getElementById("canvas2");
-    canvas3= document.getElementById("canvas3");
-    canvas4= document.getElementById("canvas4");
+    ctx4 = canvas4.getContext("2d");
+    ctx3 = canvas3.getContext("2d");
+    ctx2 = canvas2.getContext("2d");
     ctx1 = canvas1.getContext("2d");
-    ctx2= canvas2.getContext("2d");
-    ctx3=canvas3.getContext("2d");
-    ctx4=canvas4.getContext("2d");
 
     canvas_width=canvas1.width; //canvas1より,canvasの幅を取得
     canvas_height=canvas1.height; //canvas1より、canvasの高さを取得
-    ctx1.clearRect(0,0,canvas_width,canvas_height); //clearRect()は描写をクリアする
-    ctx2.clearRect(0,0,canvas_width,canvas_height); //clearRect()は描写をクリアする
-    ctx3.clearRect(0,0,canvas_width,canvas_height); //clearRect()は描写をクリアする
     ctx4.clearRect(0,0,canvas_width,canvas_height); //clearRect()は描写をクリアする
+    ctx3.clearRect(0,0,canvas_width,canvas_height); //clearRect()は描写をクリアする
+    ctx2.clearRect(0,0,canvas_width,canvas_height); //clearRect()は描写をクリアする
+    ctx1.clearRect(0,0,canvas_width,canvas_height); //clearRect()は描写をクリアする
 
 
     drag=false; //マウスは現在押されていないと設定する
-    canvas3.addEventListener('mousedown',on_mousedown,false); //canvas内でマウスを押した際、on_mousedown()メソッドを実行するアクションリスナーを作る
-    canvas3.addEventListener('mousemove',on_mousemove,false); //canvas内でマウスを動かした際、on_mousemove()メソッドを実行するアクションリスナーを作る
-    canvas3.addEventListener('mouseup',on_mouseup,false); //canvas内でマウスを離した際、on_mouseup()メソッドを実行するアクションリスナーを作る
+    canvas1.addEventListener('mousedown',on_mousedown,false); //canvas内でマウスを押した際、on_mousedown()メソッドを実行するアクションリスナーを作る
+    canvas1.addEventListener('mousemove',on_mousemove,false); //canvas内でマウスを動かした際、on_mousemove()メソッドを実行するアクションリスナーを作る
+    canvas1.addEventListener('mouseup',on_mouseup,false); //canvas内でマウスを離した際、on_mouseup()メソッドを実行するアクションリスナーを作る
 
-    parsehtml_rb_object();
-    parsehtml_combo_resolution();
-    parsehtml_combo_frequency();
-    parsehtml_combo_xnum();
-    parsehtml_combo_znum();
+    parsehtml_rb_object(); //障害物設定のラジオボタンにhtmlを挿入する
+    parsehtml_combo_xnum();//xのマス目の数のコンボボックスにhtmlを挿入する
+    parsehtml_combo_ynum();//yのマス目の数のコンボボックスにhtmlを挿入する
+    parsehtml_combo_resolution(); //マス目の間隔のコンボボックスにhtmlを挿入する
+    parsehtml_combo_frequency(); //周波数のコンボボックスにhtmlを挿入する
+
     
     object_color=object_array[object_index].color;
     rb_object_1=document.getElementById("rb_object_1");
-    rb_object_1.checked=true;
+    rb_object_1.checked=true; //初期値
     combo_xnum=document.getElementById("combo_xnum");
     combo_xnum.options[11].selected =true;
-    xnum=combo_xnum.value;
-    combo_znum=document.getElementById("combo_znum");
-    combo_znum.options[11].selected =true;
-    znum=combo_znum.value;
+    xnum=combo_xnum.value; //初期値
+    combo_ynum=document.getElementById("combo_ynum");
+    combo_ynum.options[11].selected =true;
+    ynum=combo_ynum.value; //初期値
     combo_resolution=document.getElementById("combo_resolution");
     combo_resolution.options[2].selected =true;
-    resolution=combo_resolution.value;
+    resolution=combo_resolution.value; //初期値
     combo_frequency=document.getElementById("combo_frequency");
-    combo_frequency.options[6].selected =true;
+    combo_frequency.options[6].selected =true; //初期値
 
     width=dx*xnum; //canvasでの格子全体の幅  dx*xnum
-    height=dz*znum; //canvasでの格子全体の高さ dz*znum
+    height=dy*ynum; //canvasでの格子全体の高さ dy*ynum
 
-    bitmap=twoDimensionArray(xnum,znum); //bitmapを作成
-    draw_bitmap(); //作成したbitmapをcanvas1で描写
+    bitmap=twoDimensionArray(xnum,ynum); //bitmapを作成
     draw_canvas_background(); //背景の囲い線と枠線をcanvas2で描写
-    draw_haba();
-    ctx1.fillStyle="rgb(255,0,0)";
-    ctx1.fillRect( Math.floor(xnum/2)*dx, Math.floor(znum/2)*dz,dx,dz);
+    draw_haba(); //x軸、y軸の格子全体の長さ[mm]を文字でcanvas4で描写
+    draw();
 }
 
 function set_bitmap(){ /*画面サイズ調整が行われた際、実行される
                        change_setting()によって、実行される*/
-    bitmap=twoDimensionArray(xnum,znum); //bitmapを作成
+    bitmap=twoDimensionArray(xnum,ynum); //bitmapを作成
     width=dx*xnum; //格子全体の幅を設定
-    height=dz*znum; //格子全体の高さを設定
+    height=dy*ynum; //格子全体の高さを設定
     drag=false; //マウスは現在押されていないと設定する
-    ctx1.clearRect(0,0,canvas_width,canvas_height); //clearRect()は描写をクリアする
-    ctx2.clearRect(0,0,canvas_width,canvas_height); //clearRect()は描写をクリアする
     ctx3.clearRect(0,0,canvas_width,canvas_height); //clearRect()は描写をクリアする
-    draw_bitmap(); //作成したbitmapをcanvas1で描写
+    ctx2.clearRect(0,0,canvas_width,canvas_height); //clearRect()は描写をクリアする
+    ctx1.clearRect(0,0,canvas_width,canvas_height); //clearRect()は描写をクリアする
+    drag=false; //マウスは現在押されていないと設定する
     draw_canvas_background(); //背景の囲い線と枠線をcanvas2で描写
     draw_haba();
+    draw();
 }
 
 function parsehtml_rb_object(){ /*ラジオボタンのhtmlを挿入するメソッド 
@@ -130,8 +136,8 @@ function parsehtml_combo_xnum(){
         d1.insertAdjacentHTML('beforeend',`<option value=${i}>${i}</option>`);
     }
 }
-function parsehtml_combo_znum(){
-    var d1=document.getElementById('combo_znum');
+function parsehtml_combo_ynum(){
+    var d1=document.getElementById('combo_ynum');
     for(var i=10;i<=35;i++){
         d1.insertAdjacentHTML('beforeend',`<option value=${i}>${i}</option>`);
     }
@@ -161,9 +167,9 @@ function select_xnum_change(){
     xnum = target.value;
     set_bitmap();
 }
-function select_znum_change(){
-    target = document.getElementById("combo_znum");
-    znum = target.value;
+function select_ynum_change(){
+    target = document.getElementById("combo_ynum");
+    ynum = target.value;
     set_bitmap();
 }
 function select_resolution_change(){
@@ -202,7 +208,7 @@ function on_mousedown(e){ /*マウスを押した際、実行される
         start_y = e.clientY - rect.top;
         if(start_x<=width && start_y<=height){
             end_x=start_x; end_y=start_y;
-            bitmap_set(start_x/dx,start_y/dz,object_index);
+            bitmap_set(start_x/dx,start_y/dy,object_index);
             draw();
             drag=true;
         }
@@ -222,20 +228,21 @@ function on_mouseup(e){ /*マウスを離した際、実行される
   drag=false;
   draw();
 }
-function bitmap_set(x,z,i){ /*bitmap(x,z)の値を書き換えるメソッド
+function bitmap_set(x,y,i){ /*bitmap(x,y)の値を書き換えるメソッド
                            on_mousedown(),draw()によって実行される*/
+
     var index_x=Math.floor(x);
-    var index_z=Math.floor(z);
-    bitmap[index_x][index_z]=i;
+    var index_y=Math.floor(y);
+    bitmap[index_x][index_y]=i;
 }
 function draw_bitmap(){/*各格子を描写するメソッド
                         init(),set_bitmap,draw()によって実行される*/
-    ctx1.clearRect(0,0,canvas_width,canvas_height);
+    ctx3.clearRect(0,0,canvas_width,canvas_height);
     for(var i=0;i<xnum;i++){
-        for(var n=0;n<znum;n++){
+        for(var n=0;n<ynum;n++){
             var c=bitmap[i][n];
-            ctx1.fillStyle=object_array[c].color;
-            ctx1.fillRect(i*dx,n*dz,dx,dz);
+            ctx3.fillStyle=object_array[c].color;
+            ctx3.fillRect(i*dx,n*dy,dx,dy);
         }
     }
 }
@@ -252,8 +259,8 @@ function draw_canvas_background(){ //各格子の枠線と格子全体の枠線�
     for(var i=0;i<xnum;i++){
         line(dx*i,0,dx*i,height,1,"black");
     }
-    for(var i=0;i<znum;i++){
-        line(0,dz*i,width,dz*i,1,"black");
+    for(var i=0;i<ynum;i++){
+        line(0,dy*i,width,dy*i,1,"black");
     }
     /*線を描写する内部メソッド*/
     function line(x1,y1,x2,y2,w,col){
@@ -286,25 +293,30 @@ function draw(){ //マウス選択範囲の四角形と各格子を描写する�
             disp_y=end_y;
             h=start_y-end_y;
         }
-        ctx3.clearRect(0,0,canvas_width,canvas_height);
+        ctx1.clearRect(0,0,canvas_width,canvas_height);
         draw_rect(disp_x,disp_y,w,h); //マウス選択範囲の四角形を描写
         for(var i=Math.floor(disp_x/dx);(disp_x+w)/dx>=i;i++){
-            for(var n=Math.floor(disp_y/dz);(disp_y+h)/dz>=n;n++){
+            for(var n=Math.floor(disp_y/dy);(disp_y+h)/dy>=n;n++){
                 bitmap_set(i,n,object_index); //マウス選択範囲を元に、bitmapに値を挿入する
             }
         }
     }else{
-        ctx3.clearRect(0,0,canvas_width,canvas_height);
+        ctx1.clearRect(0,0,canvas_width,canvas_height);
     }
     draw_bitmap(); //各格子を描写する
 
     function draw_rect(x1,y1,ww,hh){ //四角形を描写する内部メソッド
-        ctx3.beginPath();
-        ctx3.rect(x1,y1,ww,hh);
-        ctx3.strokeStyle="rgb(0,0,0)";
-        ctx3.lineWidth=1;
-        ctx3.stroke();
+        ctx1.beginPath();
+        ctx1.rect(x1,y1,ww,hh);
+        ctx1.globalAlpha = 0.5;
+        ctx1.strokeStyle="rgba(0,0,0)";
+        ctx1.lineWidth=1;
+        ctx1.stroke();
     }
+    center_x=xnum/2;
+    center_y=ynum/2;
+    ctx3.fillStyle="rgb(255,0,0)";
+    ctx3.fillRect( Math.floor(center_x)*dx, Math.floor(center_y)*dy,dx,dy);
 }
 function twoDimensionArray(a,b){ /*bitmapを作成するメソッド
                                    init(),set_bitmap()が実行する*/
@@ -327,14 +339,14 @@ function draw_haba(){
     ctx4.fillText("x軸 "+xnum*mm*resolution+" [mm]",x,y,200);
     x=width+10;
     y=height/2;
-    ctx4.fillText("z軸 "+znum*mm*resolution+" [mm]",x,y,200);
+    ctx4.fillText("y軸 "+ynum*mm*resolution+" [mm]",x,y,200);
 }
 function submitForm() { /*form__submitをPOSTするメソッド
                           html内のボタン名「FDTDを実行」が実行する*/
     let form = document.getElementById("form__submit");
     document.getElementById('bitmap').value=bitmap;
     document.getElementById('xnum').value=xnum;
-    document.getElementById('znum').value=znum;
+    document.getElementById('ynum').value=ynum;
     document.getElementById('resolution').value=resolution;
     frequency_index = document.getElementById("combo_frequency").value;
     document.getElementById('frequency_coefficient').value=frequency_array[frequency_index].coefficient;
@@ -357,13 +369,13 @@ function submitForm() { /*form__submitをPOSTするメソッド
   <button class="button-79"   style="border-radius:0.20rem;
   font-size:0.8rem;
   float: right;" role="button" onclick="window.open('https://note.com/clever_tern732/n/n98e02e1e4f2a')"target="_blank" rel="norefferrer">本プログラムの解説記事を読む</button>
-  <h4></h4>
+  <h4>赤い点から電磁波が流れます。赤い点の周りに金属を設置することができます</h4>
   <div class="parent">
     <div class="layout">
-      <canvas id="canvas4" width="800px" height="600px"></canvas><!--x軸、z軸の格子全体の長さを文字で描写-->
-      <canvas id="canvas1" width="800px" height="600px"></canvas><!--bitmapの色-->
+      <canvas id="canvas4" width="800px" height="600px"></canvas><!--x軸、y軸の格子全体の長さを文字で描写-->
+      <canvas id="canvas3" width="800px" height="600px"></canvas><!--bitmapの色-->
       <canvas id="canvas2" width="800px" height="600px"></canvas><!--canvasのマス目と枠線-->
-      <canvas id="canvas3" width="800px" height="600px"></canvas><!--マウスの長方形の枠線-->
+      <canvas id="canvas1" width="800px" height="600px"></canvas><!--マウスの長方形の枠線-->
                                                                 <!--canvas3が一番前方に配置されている-->
                                                                 <!--canvas3が末尾にあるので、アクションリスナの反応元をcanvas3にする-->
     </div>
@@ -379,12 +391,17 @@ function submitForm() { /*form__submitをPOSTするメソッド
       <label for="lb_xnum">xのマス目の数</label>
       <div class="dropdown">
         <select id="combo_xnum" class="dropdown-select" onchange="select_xnum_change();">
+            <!--combo_xnumの要素はjavascriptで挿入する-->
+            <!--function parsehtml_combo_xnum()が実行する-->
         </select>
       </div>
       <div></div>
-      <label for="lb_znum">zのマス目の数</label>
+      <label for="lb_ynum">yのマス目の数</label>
       <div class="dropdown">
-      <select id="combo_znum" class="dropdown-select" onchange="select_znum_change()">
+      <select id="combo_ynum" class="dropdown-select" onchange="select_ynum_change()">
+        <!--combo_ynumの要素はjavascri
+    }ptで挿入する-->
+        <!--function parsehtml_combo_ynum()が実行する-->
       </select>
       </div>
 
@@ -394,6 +411,8 @@ function submitForm() { /*form__submitをPOSTするメソッド
       <label for="lb_resolution">マス目の間隔 : </label>
       <div class="dropdown">
       <select id="combo_resolution" class="dropdown-select" onchange="select_resolution_change()">
+      <!--combo_resolutionの要素はjavascriptで挿入する-->
+      <!--function parsehtml_combo_resolution()が実行する-->
       </select>
       </div>
       <p></p>
@@ -401,12 +420,14 @@ function submitForm() { /*form__submitをPOSTするメソッド
       <label for="lb_frequency">周波数</label>
       <div class="dropdown">
       <select id="combo_frequency" class="dropdown-select">
+        <!--combo_frequencyの要素はjavascriptで挿入する-->
+        <!--function parsehtml_combo_frequency()が実行する-->
       </select>
       </div>
       <h2>PML吸収境界条件</h2>
       <label for="lb_lpml">PML層 : 15</label>
       <p></p>
-      <label for="lb_order">次数 : 5</label>
+      <label for="lb_order">次数 : 3</label>
       <p></p>
       <label for="lb_max">磁気伝導率の最大値 : 38.341</label>
       <div class="atogaki" top="10px">
@@ -420,7 +441,7 @@ function submitForm() { /*form__submitをPOSTするメソッド
   <form id="form__submit" action="download.php" method="POST">
     <input type="hidden" id="bitmap" name="bitmap">
     <input type="hidden" id="xnum" name="xnum">
-    <input type="hidden" id="znum" name="znum">
+    <input type="hidden" id="ynum" name="ynum">
     <input type="hidden" id="resolution" name="resolution">
     <input type="hidden" id="frequency_coefficient" name="frequency_coefficient">
     <input type="hidden" id="frequency_power" name="frequency_power">

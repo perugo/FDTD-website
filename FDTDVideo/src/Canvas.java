@@ -2,7 +2,7 @@ import java.awt.image.BufferedImage;
 import java.awt.*;
 
 public class Canvas {
-  public WavePoint3 wavePoint3;
+  public FDTD2D_PML fdtd2DPML;
   public ColorCode colorCode;
 
   public int dx;
@@ -21,7 +21,7 @@ public class Canvas {
     this.Img_height=Img_height;
     this.colorCode=new ColorCode(0.3);
     this.dx=bunkaino; //写真でのマス目の幅 [px]
-    wavePoint3=new WavePoint3(fdtd_Input);
+    fdtd2DPML =new FDTD2D_PML(fdtd_Input);
     nx=fdtd_Input.get_nx();
     ny=fdtd_Input.get_ny();
     lpml=fdtd_Input.get_lpml();
@@ -29,9 +29,9 @@ public class Canvas {
   public BufferedImage get_canvas(boolean draw_ornot){
     g2d.setColor(Color.white);
     g2d.fillRect(0,0,Img_width,Img_height);
-    wavePoint3.cal();
+    fdtd2DPML.cal();
     if(draw_ornot==false) {return buffImg;} //このbuffImgは何にも使われない
-    double[][] Ez=wavePoint3.get_Ez();
+    double[][] Ez= fdtd2DPML.get_Ez();
     for(int i=0;i<nx;i++){
       for(int n=0;n<ny;n++){
         double aa=Ez[i][n];
@@ -48,6 +48,9 @@ public class Canvas {
     g2d.drawLine(lpml*dx, (ny-lpml)*dx, (nx-lpml)*dx, (ny-lpml)*dx);
 
     return buffImg;
+  }
+  public void calc(){
+    fdtd2DPML.cal();
   }
 }
 

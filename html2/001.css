@@ -32,19 +32,19 @@
    position:absolute;
    top:0;
    left:0;
-   opacity:0.7;
+   opacity:1.0;
 }
 #canvas2{
    position:absolute;
    top:0;
    left:0;
-   opacity:0.8;
+   opacity:1.0;
 }
 #canvas3{
    position:absolute;
    top:0;
    left:0;
-   opacity:1.0;
+   opacity:0.8;
 }
 #canvas4{
    position:absolute;

@@ -81,7 +81,7 @@ public class FDTDVideo {
                         nextFrameTime += frameRate;
 
                 	}else {
-                		BufferedImage buffImg=canvas.get_canvas(false);
+                		canvas.calc();
                 	}
 
                     
