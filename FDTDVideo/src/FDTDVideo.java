@@ -16,11 +16,11 @@ public class FDTDVideo {
     int i;
     private int simulation_num;
     public FDTDVideo(){
-        String bitmap_filedir="/home/perugo/html2_project/inputfol/bitmap_info.txt"; //Set your bitmap file directory in your computer file.
+        String bitmap_filedir="/home/your_username/html2_project/inputfol/bitmap_info.txt"; //Set your bitmap file directory in your computer file.
                                                                                //Set your file directory where php uploads bitmap_info.txt.
-        String info_filedir="/home/perugo/html2_project/inputfol/info.txt";//Set your bitmap file directory in your computer file.
+        String info_filedir="/home/your_username/html2_project/inputfol/info.txt";//Set your bitmap file directory in your computer file.
                                                                      //Set your file directory where php uploads info.txt.
-        String mp4_filedir="/home/perugo/html2_project/test.mp4";//Set your bitmap file directory in your computer file.
+        String mp4_filedir="/home/your_username/html2_project/test.mp4";//Set your bitmap file directory in your computer file.
         //                                                          //Set your file directory where php downloads the output mp4 video.
         long nextFrameTime = 0;
         final long frameRate = DEFAULT_TIME_UNIT.convert(100, MILLISECONDS);
