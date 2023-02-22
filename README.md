@@ -36,7 +36,7 @@ FDTDVideoフォルダはIntellijで開発を行ったjavaのプロジェクト�
 
 FDTDVideoの役割はユーザーの設定した情報をもとに、電磁波解析の計算を行い、mp4動画ファイルを作成することです。
 
-javaのプロジェクトフォルダをjarファイルに変換して、html2_projectフォルダに入れていください。
+FDTDVideoをjarファイルに変換して、html2_projectフォルダに入れていください。
 
 
 #外部ライブラリ　External jar library 
