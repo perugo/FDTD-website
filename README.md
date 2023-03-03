@@ -38,7 +38,7 @@ FDTDVideoの役割はユーザーの設定した情報をもとに、電磁波�
 FDTDVideoをjarファイルに変換して、html2_projectフォルダに入れていください。
 
 
-#外部ライブラリ　External jar library 
+# 外部ライブラリ
 使用した外部ライブラリはFDTDVideo./libs ディレクトリに入っています。
 - slf4j-api-2.0.6.jar
 - xuggle-xuggler-5.4.jar
