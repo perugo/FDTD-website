@@ -23,11 +23,11 @@ https://smartdocs.me
 
 # html2
  
-html2フォルダにはユーザーが閲覧できるフォルダです。htmlファイル,cssファイル,phpファイルがあります。
+html2フォルダはユーザーが閲覧できるフォルダです。htmlファイル,cssファイル,phpファイルがあります。
 
 # html2_project
 
-html2_projectフォルダにはユーザーに直接触れさせたくない、jarファイル,シュミレーション結果のmp4動画ファイル,ユーザーの入力情報(input_fol)があります。
+html2_projectフォルダはユーザーには直接触れさせたくないフォルダです。jarファイル,シュミレーション結果のmp4動画ファイル,ユーザーの入力情報(input_fol)があります。
 
 # FDTDVideo
 
