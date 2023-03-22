@@ -11,7 +11,7 @@
     <orderEntry type="module-library" exported="">
       <library>
         <CLASSES>
-          <root url="jar://$MODULE_DIR$/libs/xuggle-xuggler-5.4.jar!/" />
+          <root url="jar://$MODULE_DIR$/libs/jcodec-0.2.5.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />
@@ -20,7 +20,7 @@
     <orderEntry type="module-library" exported="">
       <library>
         <CLASSES>
-          <root url="jar://$MODULE_DIR$/libs/slf4j-api-2.0.6.jar!/" />
+          <root url="jar://$MODULE_DIR$/libs/jcodec-javase-0.2.5.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />

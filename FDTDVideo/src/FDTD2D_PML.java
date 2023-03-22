@@ -38,12 +38,12 @@ public class FDTD2D_PML {
         feq= fdtd_input.get_feq(); //[振動/fs]
         lpml= fdtd_input.get_lpml();
         bitmap=fdtd_input.get_bitmap();
-        IWEX =lpml+((nx-2*lpml)/2);
-        IWEY =lpml+((ny-2*lpml)/2);
+        IWEX = fdtd_input.get_source_x();
+        IWEY = fdtd_input.get_source_y();
         c=2.99792458*10e8; //光速　nm/fs
         E0=8.8541878128e-12;  //真空中の誘電率[F/nm]
         M0=0.125663706e-6; //真空中の透磁率 [H/nm]
-        dt=(1/ (c*Math.sqrt( 1/(lattice_width*lattice_width) ) ) )*0.6;
+        dt=(1/ (c*Math.sqrt( 1/(lattice_width*lattice_width) ) ) )*0.9;
 
 
         Ex=new double[nx][ny];
@@ -111,8 +111,8 @@ public class FDTD2D_PML {
         amypml=new double[ny];
         bmypml=new double[ny];
 
-        order=3.0;
-        pml_conductivty_max=-(E0/(2*dt))*(-18)*(order+1)/lpml;
+        order=10.0;
+        pml_conductivty_max=-(E0/(2*dt))*(-20)*(order+1)/lpml;
         System.out.println(pml_conductivty_max);
         pml_magnetic_max=(M0/E0)*pml_conductivty_max;
 
@@ -122,7 +122,7 @@ public class FDTD2D_PML {
         pmlBlocks[1]=new Pml_Block(nx-lpml,0,nx-1,ny-1);
         pmlBlocks[2]=new Pml_Block(lpml,0,nx-lpml-1,lpml-1);
         pmlBlocks[3]=new Pml_Block(lpml,ny-lpml,nx-lpml-1,ny-1);
-/*
+
         for(int n=0;n<lpml;n++){
             System.out.println(bmypml[n]);
         }
@@ -134,7 +134,7 @@ public class FDTD2D_PML {
         for(int n=ny-lpml;n<ny;n++){
             System.out.println(bmypml[n]);
         }
-*/
+
 
     }
     public void cal(){

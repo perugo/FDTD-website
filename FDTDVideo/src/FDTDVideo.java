@@ -2,45 +2,45 @@ import java.io.*;
 import java.util.Map;
 import java.util.HashMap;
 import java.lang.Math;
-import com.xuggle.mediatool.IMediaWriter;
-import com.xuggle.mediatool.ToolFactory;
 
 import java.awt.image.BufferedImage;
+import java.io.IOException;
 
-import com.xuggle.xuggler.ICodec;
-
-import static com.xuggle.xuggler.Global.DEFAULT_TIME_UNIT;
-import static java.util.concurrent.TimeUnit.MILLISECONDS;
-public class FDTDVideo {
+/*external library jcodec-0.2.5.jar , jcodec-javase-0.2.5.jar*/
+import org.jcodec.common.io.NIOUtils;
+import org.jcodec.common.io.SeekableByteChannel;
+import org.jcodec.api.awt.AWTSequenceEncoder;
+import org.jcodec.common.model.Rational;
+/**/
+public class FDTDVideo{
     private Canvas canvas;
     int i;
     private int simulation_num;
     public FDTDVideo(){
-        String bitmap_filedir="/home/your_username/html2_project/inputfol/bitmap_info.txt"; //Set your bitmap file directory in your computer file.
-                                                                               //Set your file directory where php uploads bitmap_info.txt.
-        String info_filedir="/home/your_username/html2_project/inputfol/info.txt";//Set your bitmap file directory in your computer file.
-                                                                     //Set your file directory where php uploads info.txt.
-        String mp4_filedir="/home/your_username/html2_project/test.mp4";//Set your bitmap file directory in your computer file.
+        String bitmap_filedir="/home/perugo/html2_project/inputfol/bitmap_info.txt"; //Set your bitmap file directory in your computer file.
+        //Set your file directory where php uploads bitmap_info.txt.
+        String info_filedir="/home/perugo/html2_project/inputfol/info.txt";//Set your bitmap file directory in your computer file.
+        //Set your file directory where php uploads info.txt.
+        String mp4_filedir="/home/perugo/html2_project/test.mp4";//Set your bitmap file directory in your computer file.
         //                                                          //Set your file directory where php downloads the output mp4 video.
-        long nextFrameTime = 0;
-        final long frameRate = DEFAULT_TIME_UNIT.convert(100, MILLISECONDS);
-        final int Max_Img_Length=500;
+        final int Max_Img_Length=600;
         int Img_width;
         int Img_height;
 
-        int drawcanvasrate=6;
-        int filmnum=100;
-        simulation_num=drawcanvasrate*filmnum;
+        int drawcanvasrate=10;
+        int filmnum=130;
+        int simulation_num=drawcanvasrate*filmnum;
         try(FileReader fr=new FileReader(bitmap_filedir); //Reads your bitmap file directory
             BufferedReader br=new BufferedReader(fr);
             FileReader fr2=new FileReader(info_filedir); //Reads your info file directory
-            BufferedReader br2=new BufferedReader(fr2)){  
+            BufferedReader br2=new BufferedReader(fr2)){
             String inputf;
             i=0;
             int[][] input_bitmap;
             Map<Integer,Integer> info_Map=new HashMap<>();
             while((inputf=br2.readLine())!=null){
                 int d=Integer.valueOf(inputf);
+                System.out.println("i : "+i+"   d : "+d);
                 info_Map.put(i,d);
                 i++;
             }
@@ -60,7 +60,7 @@ public class FDTDVideo {
             FDTD_Input fdtd_input=new FDTD_Input(info_Map,input_bitmap);
             int nx=fdtd_input.get_nx();
             int ny=fdtd_input.get_ny();
-            
+
             int max=Math.max(nx,ny);
             int bunkaino=1;
             while(Max_Img_Length>bunkaino*max){
@@ -68,26 +68,26 @@ public class FDTDVideo {
             }
             Img_width=bunkaino*nx;
             Img_height=bunkaino*ny;
-
+            if(Img_width%2==1){Img_width++;}
+            if(Img_height%2==1){Img_height++;}
             canvas=new Canvas(Img_width,Img_height,bunkaino,fdtd_input);
             try {
-                final IMediaWriter writer = ToolFactory.makeWriter(mp4_filedir);
-                writer.addVideoStream(0, 0, ICodec.ID.CODEC_ID_MPEG4, Img_width, Img_height);
-                
+                SeekableByteChannel ch = NIOUtils.writableFileChannel(mp4_filedir);
+                Rational r=new Rational(30,3);
+                AWTSequenceEncoder enc = new AWTSequenceEncoder(ch,r);
                 for(i=0;i<simulation_num;i++){
-                	if(i%drawcanvasrate==0) {
-                		BufferedImage buffImg=canvas.get_canvas(true);
-                		writer.encodeVideo(0,buffImg, nextFrameTime, DEFAULT_TIME_UNIT);
-                        nextFrameTime += frameRate;
+                    if(i%drawcanvasrate==0) {
+                        BufferedImage buffImg=canvas.get_canvas();
+                        enc.encodeImage(buffImg);
 
-                	}else {
-                		canvas.calc();
-                	}
+                    }else {
+                        canvas.calc();
+                    }
 
-                    
+
                 }
-            
-                writer.close();
+
+                enc.finish();
             } catch (Exception e) {
                 e.printStackTrace();
             }

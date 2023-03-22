@@ -3,8 +3,8 @@
     <output-path>$PROJECT_DIR$/out/artifacts/FDTDVideo_jar</output-path>
     <root id="archive" name="FDTDVideo.jar">
       <element id="module-output" name="FDTDVideo" />
-      <element id="extracted-dir" path="$PROJECT_DIR$/libs/xuggle-xuggler-5.4.jar" path-in-jar="/" />
-      <element id="extracted-dir" path="$PROJECT_DIR$/libs/slf4j-api-2.0.6.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/libs/jcodec-javase-0.2.5.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/libs/jcodec-0.2.5.jar" path-in-jar="/" />
     </root>
   </artifact>
 </component>

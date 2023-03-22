@@ -1,4 +1,0 @@
-User-agent: *
-Allow: /
-
-Sitemap: http://www.smartdocs.me/sitemap.xml

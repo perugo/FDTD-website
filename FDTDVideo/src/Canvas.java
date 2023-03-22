@@ -26,11 +26,8 @@ public class Canvas {
     ny=fdtd_Input.get_ny();
     lpml=fdtd_Input.get_lpml();
   }
-  public BufferedImage get_canvas(boolean draw_ornot){
-    g2d.setColor(Color.white);
-    g2d.fillRect(0,0,Img_width,Img_height);
+  public BufferedImage get_canvas(){
     fdtd2DPML.cal();
-    if(draw_ornot==false) {return buffImg;} //このbuffImgは何にも使われない
     double[][] Ez= fdtd2DPML.get_Ez();
     for(int i=0;i<nx;i++){
       for(int n=0;n<ny;n++){
@@ -42,6 +39,8 @@ public class Canvas {
 
       }
     }
+
+    g2d.setColor(new Color(80,80,80));
     g2d.drawLine(lpml*dx, lpml*dx, (nx-lpml)*dx, lpml*dx);
     g2d.drawLine(lpml*dx, lpml*dx, lpml*dx, (ny-lpml)*dx);
     g2d.drawLine((nx-lpml)*dx, lpml*dx, (nx-lpml)*dx, (ny-lpml)*dx);
