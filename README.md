@@ -3,7 +3,7 @@
 
 https://smartdocs.me
 
-<img src="https://user-images.githubusercontent.com/34999008/220603781-6c649d18-2751-4a1a-ad84-3294698746ef.gif"   width=600 height=300 >
+<img src="https://user-images.githubusercontent.com/34999008/227071374-2b2b8ff6-65ca-467c-917f-3e3169103dd1.gif"   width=600 height=300 >
 
 
 # ご自身のPCで環境構築する手順
