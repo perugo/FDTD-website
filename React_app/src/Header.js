@@ -11,7 +11,7 @@ const Letter=styled.h3`
 export const Header=()=> {
     return (
     <Container>
-        <Letter>誰でも、簡単に電磁波シュミレーション</Letter>
+        <Letter>誰にでも、簡単に電磁波シュミレーション</Letter>
     </Container>
     )
   };

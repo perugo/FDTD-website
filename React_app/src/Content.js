@@ -38,10 +38,10 @@ const Button_setting=styled.div`
     display: inline-block;
     font-family: Circular,Helvetica,sans-serif;
     font-size: 1.0rem;
-    font-weight: 500;
+    font-weight: 600;
     letter-spacing: -.01em;
     line-height: 1.3;
-    padding: 0.75rem 1.0rem;
+    padding: 0.75rem 0.75rem;
     position: relative;
     text-align: left;
     text-decoration: none;
@@ -50,7 +50,6 @@ const Button_setting=styled.div`
     user-select: none;
     -webkit-user-select: none;
     touch-action: manipulation;
-
     &:disabled {
         color: #787878;const Canvas1=styled.canvas
         position:absolute;
@@ -99,10 +98,8 @@ const Setting_Wrapper=styled.div`
   background-color:pink;
   width:300px;
   min-width:300px;
-
 `
 const Layout_Wrapper=styled.div`
-
 `
 const Setting_Inner=styled.div`
 `
@@ -121,7 +118,6 @@ const Button_Wrapper=styled.div`
 `
 const Setting_popup=styled.div`
   width:50%;
-
 `
 const Setting_Info=styled.div`
   margin-left:10px;
@@ -134,8 +130,7 @@ const Setting_setbut=styled.div`
   display:row;
 `
 const Label=styled.label`
-  font-size: 16px;
-
+  font-size: 15px;
 `
 const ArrowImg_Inner=styled.div`
 width:70px;
@@ -172,7 +167,7 @@ font-size: 1.25rem;
 font-weight: 600;
 letter-spacing: -.01em;
 line-height: 1.3;
-padding: 1.0rem 1.25rem;
+padding: 0.75rem 1.0rem;
 position: relative;
 text-align: left;
 text-decoration: none;
@@ -181,7 +176,6 @@ transition: transform .2s;
 user-select: none;
 -webkit-user-select: none;
 touch-action: manipulation;
-
 &:disabled {
     color: #787878;
     cursor: auto;
@@ -234,21 +228,21 @@ var ctx3;
 
 var drag; //ユーザーがマウスを押している状態かを取得する
 var drag_source;//ユーザーが赤い点をドラッグ操作しているかを取得する
-
+var canvas_dx;
+var canvas_dy;
+var source_x;
+var source_y;
 var start_x; //ユーザーがマウスを押し始めたx座標
 var start_y; //ユーザーがマウスを押し始めたy座標
 var end_x; //ユーザーが現在マウスを押しているx座標
 var end_y; //ユーザーが現在マウスを押しているy座標
-var canvas_dx; //canvas上でのx軸のマス目の大きさ
-var canvas_dy; //canvas上でのy軸のマス目の大きさ
 var object_index; //ユーザーが選択している障害物のindex
-
 var c=299792458;
+var xnum;
+var ynum;
 export const Content=({setshowPopup,array})=> {
     var [width,setwidth]=useState('');
     var [height,setheight]=useState('');
-    var [xnum,setlb_xnum]=useState('');
-    var [ynum,setlb_ynum]=useState('');
     var [field_x,setlb_field_x]=useState('');
     var [field_y,setlb_field_y]=useState('');
     var [feq,set_feq]=useState('');
@@ -261,8 +255,6 @@ export const Content=({setshowPopup,array})=> {
     var [lb_lambda_dx,set_lb_lambda_dx]=useState('');
     var [lb_object_index,set_object_index]=useState('');
     var [bitmap,set_bitmap]=useState([]);
-    var [source_x,set_source_x]=useState('');
-    var [source_y,set_source_y]=useState('');
 
     const handleRadioChange=(e)=>{
       object_index=e.target.value;
@@ -274,8 +266,6 @@ export const Content=({setshowPopup,array})=> {
     function form_buttom_clicked(){
       set_bitmap(bitmap);
       set_feq(feq);
-      set_source_x(source_x);
-      set_source_y(source_y);
       setTimeout(function(){
         console.log("source_x : "+source_x);
         console.log("source_y : "+source_y);
@@ -300,7 +290,7 @@ export const Content=({setshowPopup,array})=> {
       }else{
         return;
       }
-
+      async function fff0(){
       canvas3 = document.getElementById("canvas3");
       canvas2 = document.getElementById("canvas2");
       canvas1 = document.getElementById("canvas1");
@@ -308,38 +298,48 @@ export const Content=({setshowPopup,array})=> {
       ctx2 = canvas2.getContext("2d");
       ctx1 = canvas1.getContext("2d");
       object_index=1;
-      setlb_xnum(array.split); //x軸の分割数は60
-      setlb_field_x(array.field_x); //x軸の空間長は100cm
-      setlb_field_y(array.fiel_y); //ｙ軸の空間長はx軸の2/3
-      set_feq(array.feq);
-      setTimeout(function(){
+      }
+      async function fff1(){
+        setlb_field_x(array.field_x); //x軸の空間長は100cm
+        setlb_field_y(array.fiel_y); //ｙ軸の空間長はx軸の2/3
+        set_feq(array.feq);
+      }
+      async function f1(){
         xnum=array.split;
         feq=array.feq;
         field_y=array.field_y;
         field_x=array.field_x;
-        
+      }
+      async function f2(){
         dx=field_x/xnum;
         set_dx(dx);
         dy=dx;
         set_dy(dy);
+      }
+      async function f3(){
         ynum=Math.ceil(field_y/dy); //y軸の分割数
+        console.log("ynummmmm : "+ynum);
+      }
+      async function f4(){
 
         field_y=ynum*dy;//y軸の空間長
-        
-        /*GUIの設定*/
-        //height=window.innerHeight*0.9;
+        setlb_field_y(field_y);
+      }
+      async function f5(){
         width =window.innerHeight*0.9*1.5;
         
         canvas_dx=width/xnum;
         canvas_dy=canvas_dx;
         height=canvas_dy*ynum;
-        setlb_xnum(xnum);
-        setlb_ynum(ynum);
+      }
+      async function f51(){
         setwidth(width);
         setheight(height);
         setlb_field_x(field_x);
         var fff = Math.floor( field_y * Math.pow( 10, 3 ) ) / Math.pow( 10, 3 ) ;
         setlb_field_y(fff);
+        console.log("canvas_dx ; "+canvas_dx);
+        
         set_lb_feq(make_lb_feq(feq));
         set_lb_dx(make_distance(dx));
         set_lb_dy(make_distance(dy));
@@ -348,30 +348,48 @@ export const Content=({setshowPopup,array})=> {
         set_object_index(1);
         drag=false; //マウスは現在押されていないと設定する
         drag_source=false;
-
-        source_x=Math.floor(xnum/2);
-        set_source_x(source_x);
-        source_y=Math.floor(ynum/2);
-        set_source_y(source_y);
+      }
+      async function f6(){
+        setTimeout(function(){
+          console.log("source_x : "+Math.floor(xnum/2));
+          source_x=Math.floor(xnum/2);
+          console.log("source_y : "+Math.floor(ynum/2));
+          source_y=Math.floor(Math.floor(ynum/2));
+        },200)
+      }
+      async function f7(){
         canvas1.addEventListener('mousedown',on_mousedown,false); //canvas内でマウスを押した際、on_mousedown()メソッドを実行するアクションリスナーを作る
         canvas1.addEventListener('mousemove',on_mousemove,false); //canvas内でマウスを動かした際、on_mousemove()メソッドを実行するアクションリスナーを作る
-        canvas1.addEventListener('mouseup',on_mouseup,false); //canvas内でマウスを離した際、on_mouseup()メソッドを実行するアクションリスナーを作る
+        canvas1.addEventListener('mouseup',on_mouseup,false);
         console.log("ynum is :"+ynum);
         bitmap=twoDimensionArray(xnum,ynum);
+      }
+      async function f8(){
         setTimeout(function(){
           draw_canvas_background();
         },200);
+      }
+      async function f9(){
         setTimeout(function(){
-        draw();
-        },100);
-      },200);
-
-      
+          draw();
+        },200);
+      }
+      fff0();
+      fff1();
+      f1();
+      f2();
+      f3();
+      f4();
+      f5();
+      f51();
+      f6();
+      f7();
+      f9();
+      f8();
     },[array]);
     useEffect(()=>{
       console.log("reading bitmap useEffect");
     },[bitmap]);
-
     function on_mousedown(e){ /*マウスを押した際、実行される
                             init()で作成されたアクションリスナ*/
       if(drag==false){
@@ -382,7 +400,9 @@ export const Content=({setshowPopup,array})=> {
         var index_y=Math.floor(y/canvas_dy);
         if(drag_source==false && source_x==index_x && source_y==index_y){
           drag_source=true;
-        }else if(x<=width && y<=height){
+          console.log("one_mousedown equal");
+        }else if(x<=width && y<=height && drag_source==false){
+          console.log("one_mousedown not equal");
           start_x=x; start_y=y;
           end_x=start_x; end_y=start_y;
           bitmap_set(start_x/canvas_dx,start_y/canvas_dy,object_index);
@@ -402,9 +422,7 @@ export const Content=({setshowPopup,array})=> {
         var index_y=Math.floor(y/canvas_dy);
         if(index_x>=0 && index_x<xnum && index_y>=0 && index_y<ynum){
           source_x=index_x;
-          set_source_x(source_x);
           source_y=index_y;
-          set_source_y(source_y);
           draw_red();
         }
       }else if(drag){
@@ -422,6 +440,8 @@ export const Content=({setshowPopup,array})=> {
     }
     function twoDimensionArray(a,b){ /*bitmapを作成するメソッド
                                       init(),set_bitmap()が実行する*/
+      console.log("a : "+a);
+      console.log("b : "+b);
       var x=new Array(a);
       for(var i=0;i<a;i++){
           x[i]=new Array(b);
@@ -434,6 +454,12 @@ export const Content=({setshowPopup,array})=> {
       return x;
     }
     function draw_canvas_background(){ //各格子の枠線と格子全体の枠線を描写するメソッド
+      console.log("draw_canvas_background");
+      console.log("xnum : "+xnum);
+      console.log("ynum : "+ynum);
+      console.log("width : "+width +"   height : "+height);
+      console.log("canvas_dx : "+canvas_dx);
+      console.log("canvas_dy : "+canvas_dy);
       ctx2.clearRect(0,0,width,height); //clearRect()は描写をクリアする
       line(0,1,width,1,3,"black");
       line(1,0,1,height,3,"black");
@@ -462,6 +488,8 @@ export const Content=({setshowPopup,array})=> {
                            on_mousedown(),draw()によって実行される*/
       var index_x=Math.floor(x);
       var index_y=Math.floor(y);
+      console.log(index_x);
+      console.log(index_y);
       bitmap[index_x][index_y]=i;
       set_bitmap(bitmap);
       ctx3.fillStyle=object_array[i].color;
@@ -631,4 +659,3 @@ export const Content=({setshowPopup,array})=> {
       </Container>
     )
   };
-  

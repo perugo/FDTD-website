@@ -3,7 +3,6 @@ import { Header } from './Header';
 import { Content } from './Content';
 import Popup from './Popup';
 import { useState,useEffect,useRef } from 'react';
-import { Helmet } from 'react-helmet';
 
 const Body=styled.div`
   background-color:white;
@@ -35,10 +34,10 @@ function App() {
     readOnce.current=false;
     console.log("reading app useEffect");
     var default_array={
-      field_x:50,
-      field_y:33,
-      split:160,
-      feq:10000,
+      field_x:40,
+      field_y:27,
+      split:120,
+      feq:9000,
     };
     setTimeout(function(){
       setarray(default_array);
@@ -61,11 +60,6 @@ function App() {
 
   return (
     <div className="App">
-      <Helmet>
-        <title>電磁波シュミレーション</title>
-        <meta name="description" content="簡単にFDTD電磁波シュミレーション" />
-        <meta name="theme-color" content="#008f68" />
-      </Helmet>
       <Body>
         <Header>
         </Header>

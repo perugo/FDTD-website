@@ -193,6 +193,8 @@ export default function Popup({sendmessage,closePopup,array}){
   function sendclosing(){
     closePopup("fffg");
   }
+  
+
   return(
     <PopupMain>
       <LeftBar onClick = {sendclosing}>
@@ -234,9 +236,9 @@ export default function Popup({sendmessage,closePopup,array}){
           </Input_Wrapper>
         </Textarea_Wrapper>
         <Textarea_Wrapper>
-            <h3>x軸の分割数 : </h3>
+            <h3>x軸の分割数 : 120</h3>
             <Input_Wrapper>
-            <Taskname_textarea
+              <Taskname_textarea
                       id="split"
                       split={split}
                       onKeyPress={e => {
