@@ -10,19 +10,26 @@ $xnum=$_POST['xnum'];
 $ynum=$_POST['ynum'];
 $dx=$_POST['dx'];
 $frequency=$_POST['frequency'];
-$source_x=$_POST['source_x'];
-$source_y=$_POST['source_y'];
+$source_num=$_POST['source_num'];
+$source=$_POST['source'];
 
-if(isset($bitmap) && isset($xnum) && isset($ynum) && isset($dx) && isset($frequency)  && isset($source_x) && isset($source_y)){
+if(isset($bitmap) && isset($xnum) && isset($ynum) && isset($dx) && isset($frequency)  && isset($source_num) && isset($source) ){
 $fp = fopen($filename,"wb");
     fwrite($fp,$bitmap);
     fclose($fp);
     $fp2 = fopen($filename2,"wb");
-    $data=$xnum . "\n" . $ynum . "\n" . $dx . "\n". $frequency . "\n" . $source_x . "\n" . $source_y;
+    $lines=explode("/",$source);
+    $data=$xnum . "\n" . $ynum . "\n" . $dx . "\n". $frequency . "\n" . $source_num;
+    foreach($lines as $line){
+        $comma=explode(",",$line);
+        foreach($comma as $com){
+            $data=$data . "\n" . $com ;
+	}
+    }
+
     fwrite($fp2,$data);
     fclose($fp2);
     
-
     $cmd = escapeshellcmd("java -jar " . $jarFilePath);
     $result=shell_exec($cmd);
     header('Content-Description: File Transfer');
@@ -33,7 +40,6 @@ $fp = fopen($filename,"wb");
     header('Pragma: public');
     header('Content-Length: ' . filesize($filename3));
     readfile($filename3);
-    
     exit;
 }else{
 }

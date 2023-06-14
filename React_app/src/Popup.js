@@ -16,19 +16,30 @@ const LeftBar=styled.div`
   width:100%;
 `
 const Middle=styled.div`
-  height:600px;
-  min-height:600px;
+  min-height:450px;
   background-color:#FFEBCD;
 
 `
+const P_label=styled.p`
+  font-size:1.0rem;
+  margin-block-start:0.8em;
+  margin-block-end:0.5em;
+  font-weight: 500;
+`
 const MiddleBar=styled.div`
-  width:400px;
-  min-width:400px;
+  min-width:330px;
   margin-left:auto;
   margin-right:auto;
-  display:grid;
+  display:flex;
+  flex-direction:column;
+  height:max;
 `
-
+const Middle_top=styled.div`
+flex:1;
+`
+const Middle_buttom=styled.div`
+flex:1;
+`
 const Middle_Wrapper=styled.div`
   margin-left:10px;
   margin-bottom:20px;
@@ -66,7 +77,7 @@ const Taskname_textarea=styled.textarea`
 const Input_Wrapper=styled.div`
   position:relative;
   min-width:100px;
-  min-height:30px;
+  min-height:22px;
 `
 const Button_setting=styled.div`
     backface-visibility: hidden;
@@ -78,11 +89,11 @@ const Button_setting=styled.div`
     cursor: pointer;
     display: inline-block;
     font-family: Circular,Helvetica,sans-serif;
-    font-size: 1.25rem;
-    font-weight: 600;
+    font-size: 1.0rem;
+    font-weight: 500;
     letter-spacing: -.01em;
-    line-height: 1.3;
-    padding: 1.0rem 1.25rem;
+    line-height: 0.9;
+    padding: 0.75rem 1.0rem;
     position: relative;
     text-align: left;
     text-decoration: none;
@@ -139,33 +150,22 @@ const Setting_Wrapper=styled.div`
 
 const Error_Code=styled.div`
 `
-export default function Popup({sendmessage,closePopup,array}){
+//trigger
+export default function Popup({send_array,closePopup,array}){
   const [field_x,setfield_x]=useState(array.field_x);
   const [field_y,setfield_y]=useState(array.field_y);
   const [split,setsplit]=useState(array.split);
   const [feq,setfeq]=useState(array.feq);
   const [error_message,set_error_message]=useState('');
-  const [soto,setsoto]=useState('');
-  const [naka,setnaka]=useState("600px");
   const re = /^[0-9\b]+$/;
   useEffect(() => {
-    var u=(window.innerHeight-600)/2;
-    console.log("u is :"+u);
-    u=u+"px"
-    setsoto(u);
-    setnaka("600px");
-    console.log("from popup array.field_x is :"+array.field_x);
-    console.log("from popup array.field_x is :"+array.field_y);
-    console.log("from popup array.field_x is :"+array.feq);
-    console.log("from popup array.field_x is :"+array.split);
-
   },[]);
   function Send(){
     if(field_x =="" || field_y=="" || split=="" || feq==""){
       set_error_message("空の入力値があります");
       return;
     }
-    if(field_x>500 || field_y>500 || split>200 || feq>990000){
+    if(field_x>500 || field_y>500 || split>400 || feq>990000){
       set_error_message("既定値よりも大きすぎる数字があります");
       return;
     }
@@ -177,21 +177,24 @@ export default function Popup({sendmessage,closePopup,array}){
       set_error_message("x軸の空間長に比べて、y軸の空間長が長すぎます");
       return;
     }
-
+    if(split<=100){
+      set_error_message("x軸の分割数が小さすぎます");
+      return;
+    }
+    if(split%3 != 0){
+      set_error_message("x軸の分割数は３で割り切れる数字に設定してください");
+      return;
+    }
     var array2={
         "field_x":field_x,
         "field_y":field_y,
         "split":split,
         "feq":feq
     };
-    console.log("Popup field_x : "+field_x);
-    console.log("Popup filed_y : "+field_y);
-    console.log("Popup split : "+split);
-    console.log("feq : "+feq);
-    sendmessage(array2);
+    send_array(array2);
   }
   function sendclosing(){
-    closePopup("fffg");
+    closePopup();
   }
   
 
@@ -201,12 +204,13 @@ export default function Popup({sendmessage,closePopup,array}){
 
       </LeftBar>
       <MiddleBar>
-        <div onClick={sendclosing} style={{height:soto}}/>
-      <Middle style={{height:naka}}>
+      <Middle_top onClick={sendclosing} />
+      <Middle>
+        
         <Middle_Wrapper>
-          <h2>設定項目</h2>
+          <h4>設定項目</h4>
           <Textarea_Wrapper>
-            <h3>x軸の空間長 : </h3>
+            <P_label>x軸の空間長[cm]</P_label>
             <Input_Wrapper>
               <Taskname_textarea
                         id="field_x"
@@ -221,7 +225,7 @@ export default function Popup({sendmessage,closePopup,array}){
             </Input_Wrapper>
           </Textarea_Wrapper>
         <Textarea_Wrapper>
-            <h3>y軸の空間長 : </h3>
+            <P_label>y軸の空間長[cm]</P_label>
             <Input_Wrapper>
             <Taskname_textarea
                       id="field_y"
@@ -236,7 +240,7 @@ export default function Popup({sendmessage,closePopup,array}){
           </Input_Wrapper>
         </Textarea_Wrapper>
         <Textarea_Wrapper>
-            <h3>x軸の分割数 : 120</h3>
+            <P_label>x軸の分割数</P_label>
             <Input_Wrapper>
               <Taskname_textarea
                       id="split"
@@ -251,7 +255,7 @@ export default function Popup({sendmessage,closePopup,array}){
           </Input_Wrapper>
         </Textarea_Wrapper>
         <Textarea_Wrapper>
-            <h3><code>周波数[MHz] : </code></h3>
+            <P_label>周波数[MHz]</P_label>
             <Input_Wrapper>
             <Taskname_textarea
                       id="feq"
@@ -263,8 +267,8 @@ export default function Popup({sendmessage,closePopup,array}){
                       onChange={(e)=> setfeq(e.target.value)}
                       defaultValue={feq}
             />
-          </Input_Wrapper>
-        </Textarea_Wrapper>
+            </Input_Wrapper>
+          </Textarea_Wrapper>
         </Middle_Wrapper>
         <Error_Code>{error_message}
         </Error_Code>
@@ -273,7 +277,7 @@ export default function Popup({sendmessage,closePopup,array}){
           </Button_setting>
         </Setting_Wrapper>
       </Middle>
-      <div onClick={sendclosing} style={{height:soto}} />
+      <Middle_buttom onClick={sendclosing} />
       </MiddleBar>
       <RightBar onClick = {sendclosing}>
 
